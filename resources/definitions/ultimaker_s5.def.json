@@ -25,7 +25,7 @@
             "1": "ultimaker_s5_extruder_right"
         },
         "first_start_actions": [ "DiscoverUM3Action" ],
-        "supported_actions": [ "DiscoverUM3Action" ],
+        "supported_actions": [ "DiscoverUM3Action","SyncMaterials" ],
         "supports_usb_connection": false,
         "supports_network_connection": true,
         "supports_material_export": true,

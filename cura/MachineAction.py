@@ -33,12 +33,36 @@ class MachineAction(QObject, PluginObject):
         self._qml_url = ""
         self._view = None
         self._finished = False
+        self._open_as_dialog = True
 
     labelChanged = pyqtSignal()
     onFinished = pyqtSignal()
 
     def getKey(self) -> str:
         return self._key
+    
+    @pyqtSlot(result = bool)
+    def openAsDialog(self) -> bool:
+        """Whether this action will show a dialog.
+
+         If not, the action will directly run the function inside execute().
+
+        :return: Defaults to true to be in line with the old behaviour.
+        """
+
+        return self._open_as_dialog
+
+    @pyqtSlot(result = bool)
+    def isVisible(self) -> bool:
+        """Whether this action button will be visible.
+
+         Example: Show only when isLoggedIn
+
+        :return: Defaults to true to be in line with the old behaviour.
+        """
+
+        return True
+    
 
     def needsUserInteraction(self) -> bool:
         """Whether this action needs to ask the user anything.
@@ -58,6 +82,14 @@ class MachineAction(QObject, PluginObject):
         if self._label != label:
             self._label = label
             self.labelChanged.emit()
+    
+    @pyqtSlot()
+    def execute(self) -> None:
+        self._execute()
+    
+    def _execute(self) -> None:
+        """Protected implementation of execute."""
+        pass
 
     @pyqtSlot()
     def reset(self) -> None:

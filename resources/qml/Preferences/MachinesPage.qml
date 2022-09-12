@@ -67,16 +67,21 @@ UM.ManagementPage
             {
                 width: Math.round(childrenRect.width + 2 * screenScaleFactor)
                 height: childrenRect.height
+                visible: machineActionRepeater.model[index].isVisible()
                 Cura.SecondaryButton
                 {
                     text: machineActionRepeater.model[index].label
                     onClicked:
                     {
                         var currentItem = machineActionRepeater.model[index]
-                        actionDialog.loader.manager = currentItem
-                        actionDialog.loader.source = currentItem.qmlPath
-                        actionDialog.title = currentItem.label
-                        actionDialog.show()
+                        if (currentItem.openAsDialog()) {
+                            actionDialog.loader.manager = currentItem
+                            actionDialog.loader.source = currentItem.qmlPath
+                            actionDialog.title = currentItem.label
+                            actionDialog.show()
+                        } else {
+                            currentItem.execute()
+                        }
                     }
                 }
             }

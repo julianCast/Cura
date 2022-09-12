@@ -1,0 +1,8 @@
+{
+    "name": "BCN3D",
+    "author": "BCN3D Techs",
+    "version": "1.0.1",
+    "description": "BCN3D Tools",
+    "api": 8,
+    "i18n-catalog": "cura"
+}
