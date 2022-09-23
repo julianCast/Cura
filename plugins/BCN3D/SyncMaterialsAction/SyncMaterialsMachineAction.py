@@ -4,11 +4,10 @@
 from UM.Application import Application
 from UM.Logger import Logger
 from UM.i18n import i18nCatalog
-from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtCore import pyqtSlot, pyqtProperty
 
 catalog = i18nCatalog("cura")
 
-#from .DataApiService import DataApiService
 from cura.Machines.ContainerTree import ContainerTree
 from cura.CuraApplication import CuraApplication
 from cura.MachineAction import MachineAction
@@ -19,19 +18,19 @@ class SyncMaterialsMachineAction(MachineAction):
         super().__init__("SyncMaterials", catalog.i18nc("@action", "Sync Materials"))
         self._application = application
         self._open_as_dialog = False
-        self._testing = True
+        self._testing = False
    
     @pyqtSlot()
     def execute(self):
         super().execute()
         self.syncActivePrinterMaterials()
     
-    @pyqtSlot(result = bool)
-    def isVisible(self) -> bool:
+    @pyqtProperty(bool, constant = True)
+    def visible(self) -> bool:
         return self._testing or CuraApplication.getInstance().getCuraAPI().account.isLoggedIn and Application.getInstance().getGlobalContainerStack().getMetaDataEntry("serial_number")
 
     def syncActivePrinterMaterials(self):
-        if self.isVisible():
+        if self.visible:
             self.machine_manager = self._application.getMachineManager()
 
             # Fetch materials

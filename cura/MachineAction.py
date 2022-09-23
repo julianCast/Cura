@@ -33,16 +33,18 @@ class MachineAction(QObject, PluginObject):
         self._qml_url = ""
         self._view = None
         self._finished = False
+        self._visible = True
         self._open_as_dialog = True
 
     labelChanged = pyqtSignal()
+    visibilityChanged = pyqtSignal()
     onFinished = pyqtSignal()
 
     def getKey(self) -> str:
         return self._key
     
-    @pyqtSlot(result = bool)
-    def openAsDialog(self) -> bool:
+    @pyqtProperty(bool, constant=True)
+    def shouldOpenAsDialog(self) -> bool:
         """Whether this action will show a dialog.
 
          If not, the action will directly run the function inside execute().
@@ -52,8 +54,15 @@ class MachineAction(QObject, PluginObject):
 
         return self._open_as_dialog
 
-    @pyqtSlot(result = bool)
-    def isVisible(self) -> bool:
+    @pyqtSlot()
+    def setVisible(self, visible: bool) -> None:
+        if self._visible != visible:
+            self._visible = visible
+            self.visibilityChanged.emit()
+
+
+    @pyqtProperty(bool, notify = visibilityChanged)
+    def visible(self) -> bool:
         """Whether this action button will be visible.
 
          Example: Show only when isLoggedIn
@@ -61,7 +70,7 @@ class MachineAction(QObject, PluginObject):
         :return: Defaults to true to be in line with the old behaviour.
         """
 
-        return True
+        return self._visible
     
 
     def needsUserInteraction(self) -> bool:
