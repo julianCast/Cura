@@ -18,7 +18,11 @@ class SyncMaterialsMachineAction(MachineAction):
         super().__init__("SyncMaterials", catalog.i18nc("@action", "Sync Materials"))
         self._application = application
         self._open_as_dialog = False
-        self._testing = False
+        self._testing = True
+
+        """ Detect login change to update user printers """
+        self._account = CuraApplication.getInstance().getCuraAPI().account
+        self._account.loginStateChanged.connect(self._onLoginStateChanged)
    
     @pyqtSlot()
     def execute(self):
@@ -28,6 +32,9 @@ class SyncMaterialsMachineAction(MachineAction):
     @pyqtProperty(bool, constant = True)
     def visible(self) -> bool:
         return self._testing or CuraApplication.getInstance().getCuraAPI().account.isLoggedIn and Application.getInstance().getGlobalContainerStack().getMetaDataEntry("serial_number")
+
+    def _onLoginStateChanged(self, logged_in: bool) -> None:
+        self.syncActivePrinterMaterials()
 
     def syncActivePrinterMaterials(self):
         if self.visible:
